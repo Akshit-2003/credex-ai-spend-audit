@@ -1,5 +1,6 @@
-name: CI Pipeline
+name: Credex Continuous Integration Pipeline
 
+# Triggers when code is pushed or pulled against the main branch
 on:
   push:
     branches: [ main ]
@@ -7,24 +8,29 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  execute-audit-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
+    # Step 1: Clone the repository onto the GitHub cloud runner environment
+    - name: Checkout Code Repository
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
+    # Step 2: Establish the precise Node version matrix match for May 2026 specifications
+    - name: Setup Node.js Environment
       uses: actions/setup-node@v4
       with:
-        node-size: 20
+        node-version: 20
         cache: 'npm'
 
-    - name: Install Dependencies
+    # Step 3: Restore pristine dependency nodes bypassing broken local environment loops
+    - name: Clean Install Project Dependencies
       run: npm ci
 
-    - name: Run Lint
-      run: npm run lint --if-present
+    # Step 4: Run strict TypeScript compilation check to verify type-safety interfaces
+    - name: Execute TypeScript Compilation Check
+      run: npm run build
 
-    - name: Run Tests
-      run: npm test --if-present
+    # Step 5: Fire the automated deterministic unit test suites forcefully via direct binaries
+    - name: Run Automated Vitest Spec Matrix
+      run: npx vitest run

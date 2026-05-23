@@ -43,26 +43,19 @@ export function runSpendAudit(tools: ToolInput[], teamSize: number): AuditSummar
     let action: AuditRecommendation['actionRequired'] = 'OPTIMAL';
     let reasoning = "Your current pricing tier alignment fits standard operational patterns safely.";
 
-    // Rule normalization based on vendor name strings
     const name = tool.toolName.toLowerCase();
 
-    // ----------------------------------------------------
-    // RULE BLOCK 1: ANTHROPIC CLAUDE COMPLIANCE MATRIX
-    // ----------------------------------------------------
+    // 1. ANTHROPIC CLAUDE COMPLIANCE MATRIX
     if (name.includes('claude')) {
       const isTeamPlan = tool.plan.toLowerCase().includes('team');
-      
-      // Clause: Team plans require minimum 5 seats bundle floor
       if (isTeamPlan && tool.seats < 5) {
-        // Evaluate downgrade optimization to Individual Pro ($20/seat)
         const individualProCost = tool.seats * 20;
         if (individualProCost < current) {
           optimized = individualProCost;
           action = 'DOWNGRADE_TIER';
           reasoning = `Anthropic Claude Team tier enforces a mandatory 5-seat billing floor. Downgrading your ${tool.seats} active users to individual 'Pro' accounts ($20/mo) prevents paying for ghost allocations.`;
         }
-      } 
-      else if (!isTeamPlan && tool.seats >= 5) {
+      } else if (!isTeamPlan && tool.seats >= 5) {
         const standardProCost = tool.seats * 20;
         if (current > standardProCost) {
           optimized = standardProCost;
@@ -72,9 +65,7 @@ export function runSpendAudit(tools: ToolInput[], teamSize: number): AuditSummar
       }
     }
 
-    // ----------------------------------------------------
-    // RULE BLOCK 2: CURSOR AI EDITOR ANALYSIS
-    // ----------------------------------------------------
+    // 2. CURSOR AI EDITOR ANALYSIS
     else if (name.includes('cursor')) {
       const isBusiness = tool.plan.toLowerCase().includes('business');
       const standardProCost = tool.seats * 20;
@@ -90,14 +81,11 @@ export function runSpendAudit(tools: ToolInput[], teamSize: number): AuditSummar
       }
     }
 
-    // ----------------------------------------------------
-    // RULE BLOCK 3: CHATGPT (OPENAI) COMPLIANCE ENGINE
-    // ----------------------------------------------------
+    // 3. CHATGPT (OPENAI) COMPLIANCE ENGINE
     else if (name.includes('chatgpt')) {
       const isTeam = tool.plan.toLowerCase().includes('team');
-      
       if (isTeam && tool.seats < 2) {
-        optimized = tool.seats * 20; // Plus tier price
+        optimized = tool.seats * 20;
         action = 'DOWNGRADE_TIER';
         reasoning = "OpenAI ChatGPT Team subscription enforces a 2-seat minimum contract floor. Reverting standalone user to ChatGPT Plus saves direct monthly capital.";
       } else if (current > (isTeam ? tool.seats * 30 : tool.seats * 20)) {
@@ -107,12 +95,9 @@ export function runSpendAudit(tools: ToolInput[], teamSize: number): AuditSummar
       }
     }
 
-    // ----------------------------------------------------
-    // RULE BLOCK 4: HEADCOUNT OVERPROVISIONING CHECK (Uses teamSize)
-    // ----------------------------------------------------
-    // If allocated seats for a single tool exceed the actual startup headcount
+    // 4. HEADCOUNT OVERPROVISIONING CHECK (Fixed fractional math logic here!)
     if (tool.seats > teamSize && action === 'OPTIMAL') {
-      const adjustedSeatsCost = teamSize * (current / tool.seats);
+      const adjustedSeatsCost = Math.round(teamSize * (current / tool.seats));
       if (adjustedSeatsCost < current) {
         optimized = adjustedSeatsCost;
         action = 'CONSOLIDATE_SEATS';
@@ -120,15 +105,14 @@ export function runSpendAudit(tools: ToolInput[], teamSize: number): AuditSummar
       }
     }
 
-    // ----------------------------------------------------
-    // RULE BLOCK 5: CREDEX SPECIAL CREDITS SUBSIDY LINK
-    // ----------------------------------------------------
+    // 5. CREDEX SPECIAL CREDITS SUBSIDY LINK
     if ((name.includes('api') || current > 200) && action === 'OPTIMAL') {
       optimized = Math.round(current * 0.75);
       action = 'MIGRATE_TO_CREDEX';
       reasoning = `Your usage profile qualifies for Credex Infrastructure Credits optimization. Shifting API queries to open-weights nodes via Credex credits instantly slices 25% off standard commercial retail margins.`;
     }
 
+    // Final clean precision locking
     const savings = Math.max(0, current - optimized);
     totalOptimizedSpend += optimized;
 
@@ -136,7 +120,7 @@ export function runSpendAudit(tools: ToolInput[], teamSize: number): AuditSummar
       toolName: tool.toolName,
       currentSpend: current,
       optimizedSpend: optimized,
-      potentialSavings: savings,
+      potentialSavings: Math.round(savings), // Force integer rounding for screenshots clean look
       actionRequired: action,
       reasoning
     });
@@ -152,9 +136,9 @@ export function runSpendAudit(tools: ToolInput[], teamSize: number): AuditSummar
   const credexSubsidyAmount = credexSubsidyEligible ? Math.min(5000, netMonthlySavings * 12) : 0;
 
   return {
-    totalCurrentSpend,
-    totalOptimizedSpend,
-    netMonthlySavings,
+    totalCurrentSpend: Math.round(totalCurrentSpend),
+    totalOptimizedSpend: Math.round(totalOptimizedSpend),
+    netMonthlySavings: Math.round(netMonthlySavings),
     efficiencyScore,
     recommendations,
     credexSubsidyEligible,

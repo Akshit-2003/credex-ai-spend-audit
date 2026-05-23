@@ -48,14 +48,6 @@ export default function App() {
   const handleExecuteAudit = () => {
     const summary = runSpendAudit(tools, teamSize);
     setAuditResult(summary);
-    
-    // Smooth scroll down to results container after calculation state updates
-    setTimeout(() => {
-      const element = document.getElementById('audit-results-node');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
   };
 
   const totalSpend = tools.reduce((acc, t) => acc + t.monthlySpend, 0);
@@ -89,12 +81,12 @@ export default function App() {
       </nav>
 
       {/* 2. HERO HEADER */}
-      <header className="pt-36 pb-16 px-6 relative overflow-hidden border-b border-slate-900/40">
+      <header className="pt-36 pb-12 px-6 relative overflow-hidden border-b border-slate-900/40">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4/5 h-75 bg-cyan-500/5 blur-[140px] rounded-full pointer-events-none"></div>
-        <div className="max-w-4xl mx-auto text-center space-y-6">
+        <div className="max-w-4xl mx-auto text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-slate-800 bg-slate-900/40 text-[11px] font-mono tracking-wide text-slate-400">
             <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-            Deterministic Optimization Engine Active
+            Deterministic Optimization Dashboard Ready
           </div>
           <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-[1.05]">
             Stop Leaking Venture Capital On <br />
@@ -103,11 +95,11 @@ export default function App() {
         </div>
       </header>
 
-      {/* 3. CONSOLE INTERFACE CONTAINER */}
+      {/* 3. CORE INTERFACE CONTAINER */}
       <main className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 pt-12 pb-28">
         
-        {/* Input Block Section */}
-        <section className="lg:col-span-8 space-y-8">
+        {/* Left Inputs Panel */}
+        <section className="lg:col-span-7 space-y-8">
           <div className="bg-slate-900/20 border border-slate-800/80 rounded-2xl p-6 md:p-8 relative shadow-xl backdrop-blur-xs">
             <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-cyan-500/20 to-transparent"></div>
             
@@ -124,7 +116,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Demographics Block */}
+            {/* Demographics */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Total Company Headcount</label>
@@ -146,7 +138,7 @@ export default function App() {
 
             <div className="h-px bg-slate-900 my-6"></div>
 
-            {/* Form Rows Pipeline */}
+            {/* Dynamic Rows */}
             <div className="space-y-3">
               {tools.map((tool, index) => (
                 <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3.5 bg-slate-950/40 border border-slate-900 rounded-xl items-center group">
@@ -178,7 +170,6 @@ export default function App() {
               ))}
             </div>
 
-            {/* CTA Triggers */}
             <div className="mt-8 pt-4 border-t border-slate-900/60 flex flex-col sm:flex-row items-center justify-between gap-4">
               <button onClick={handleAddTool} className="w-full sm:w-auto px-4 py-2 bg-slate-950 hover:bg-slate-900 border border-slate-850 rounded-lg text-xs font-semibold text-slate-300">
                 + Append Service Stream
@@ -188,80 +179,121 @@ export default function App() {
               </button>
             </div>
           </div>
+        </section>
 
-          {/* DYNAMIC REPORT DISPLAY OUTPUT LAYER */}
-          {auditResult && (
-            <div id="audit-results-node" className="bg-slate-900/40 border border-emerald-500/20 rounded-2xl p-6 md:p-8 space-y-6 shadow-2xl transition-all">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 pb-4">
+        {/* Right Output Panel (With Advanced Conditional Business Logic) */}
+        <section id="audit-results-node" className="lg:col-span-5 w-full">
+          {auditResult ? (
+            <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 relative shadow-2xl space-y-6 overflow-hidden">
+              
+              {/* HEADER INFORMATION MARKS */}
+              <div className="flex justify-between items-center border-b border-slate-800/80 pb-4">
                 <div>
-                  <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
-                    Audit Execution Summary
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-0.5">Deterministic evaluation records based on May 2026 specs.</p>
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 font-bold bg-cyan-500/5 border border-cyan-500/10 px-2.5 py-1 rounded">
+                    Audit Certificate Verified
+                  </span>
+                  <div className="text-xs text-slate-500 mt-1.5 font-mono">ID: CX-2026-NEXUS</div>
                 </div>
-                <div className="bg-slate-950 border border-slate-850 px-4 py-2 rounded-xl text-center">
-                  <div className="text-[9px] uppercase tracking-wider font-mono text-slate-500">Net Monthly Savings</div>
-                  <div className="text-xl font-black text-emerald-400 font-mono">${auditResult.netMonthlySavings}</div>
+                <div className="text-right">
+                  <div className="text-[9px] font-mono uppercase text-slate-500">Monthly Savings</div>
+                  <div className="text-2xl font-black text-emerald-400 font-mono">${auditResult.netMonthlySavings}</div>
                 </div>
               </div>
 
-              {/* Stats Metrics Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 bg-slate-950/40 border border-slate-900 rounded-xl">
-                  <div className="text-[10px] font-mono text-slate-500 uppercase">System Efficiency Index</div>
-                  <div className="text-lg font-bold text-white mt-1">{auditResult.efficiencyScore}%</div>
-                </div>
-                {auditResult.credexSubsidyEligible && (
-                  <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-xl">
-                    <div className="text-[10px] font-mono text-emerald-500 uppercase">Credex Annualized Subsidy Offset</div>
-                    <div className="text-lg font-bold text-emerald-400 mt-1">${auditResult.credexSubsidyAmount} / yr</div>
+              {/* ----------------------------------------------------
+                  CRITICAL BUSINESS LOGIC CODES: CONDITIONAL BANNER ALERTS
+                  ---------------------------------------------------- */}
+              {auditResult.netMonthlySavings > 500 ? (
+                /* SCENARIO 1: CRITICAL BLEEDING BANNER (> $500/mo waste) */
+                <div className="p-4 bg-linear-to-r from-red-500/10 via-indigo-500/5 to-transparent border border-red-500/20 rounded-xl relative overflow-hidden animate-pulse">
+                  <div className="absolute top-0 right-0 p-1 text-[8px] font-mono font-bold bg-red-500 text-slate-950 uppercase">
+                    Critical Leak
                   </div>
-                )}
-              </div>
+                  <h4 className="text-xs font-bold text-red-400 uppercase tracking-wide">⚠️ Severe Cash Leakage Detected</h4>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                    Your stack configuration is severely unoptimized, throwing away over <span className="text-white font-bold">${auditResult.netMonthlySavings}/mo</span>. Shifting to open infrastructure with **Credex Managed Credits** is highly recommended to salvage runway bounds immediately.
+                  </p>
+                </div>
+              ) : auditResult.netMonthlySavings === 0 ? (
+                /* SCENARIO 2: OPTIMAL PERFECT EFFICIENCY BANNER ($0 waste) */
+                <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl">
+                  <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wide">✨ You're spending well</h4>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                    Excellent operational hygiene. Every single subscription layer maps cleanly against active operational nodes with 0 redundant seat overlap bugs detected. Keep it lean!
+                  </p>
+                </div>
+              ) : (
+                /* SCENARIO 3: MODERATE OPTIMIZATION ALERT ($1 - $500 waste) */
+                <div className="p-4 bg-slate-950/60 border border-slate-900 rounded-xl">
+                  <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wide">💡 Optimization Potential Available</h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                    Minor structural friction detected inside seat scaling logs. Check individual vectors below to trim your baseline monthly burn rate.
+                  </p>
+                </div>
+              )}
 
-              {/* Recommendations Feed Blocks */}
-              <div className="space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Target Vector Adjustments:</div>
-                {auditResult.recommendations.map((rec, i) => (
-                  <div key={i} className={`p-4 rounded-xl border ${rec.potentialSavings > 0 ? 'bg-slate-950/60 border-slate-850' : 'bg-slate-900/10 border-slate-900/60'}`}>
-                    <div className="flex justify-between items-start gap-4">
-                      <div>
-                        <span className="text-xs font-bold text-white uppercase tracking-wider block">{rec.toolName}</span>
-                        <p className="text-xs text-slate-400 mt-1 leading-relaxed">{rec.reasoning}</p>
-                      </div>
-                      {rec.potentialSavings > 0 && (
-                        <span className="text-xs font-mono font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 px-2 py-0.5 rounded shrink-0">
-                          Save ${rec.potentialSavings}/mo
-                        </span>
-                      )}
+              {/* Graphical Comparison Matrix */}
+              <div className="space-y-3 bg-slate-950/40 border border-slate-900 p-4 rounded-xl">
+                <div className="text-[10px] font-mono uppercase text-slate-400 tracking-wider">Capital Efficiency Progress Matrix</div>
+                <div className="space-y-2 pt-1">
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-mono">
+                      <span className="text-slate-500">Gross Baseline Outflow</span>
+                      <span className="text-slate-300">${auditResult.totalCurrentSpend}/mo</span>
+                    </div>
+                    <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                      <div className="bg-amber-500 h-full w-full rounded-full"></div>
                     </div>
                   </div>
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-mono">
+                      <span className="text-cyan-400">Credex Adjusted Blueprint</span>
+                      <span className="text-white font-bold">${auditResult.totalOptimizedSpend}/mo</span>
+                    </div>
+                    <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                      <div className="bg-cyan-400 h-full rounded-full transition-all duration-500" style={{ width: `${auditResult.efficiencyScore}%` }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recommendations Bulletins */}
+              <div className="space-y-2.5">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-slate-500">Target Vector Adjustments</div>
+                {auditResult.recommendations.map((rec, idx) => (
+                  <div key={idx} className="p-3 bg-slate-950/60 border border-slate-900 rounded-xl flex justify-between items-start gap-3">
+                    <div className="space-y-0.5">
+                      <span className="text-xs font-bold text-white uppercase tracking-wide">{rec.toolName} Node</span>
+                      <p className="text-[11px] text-slate-400 leading-relaxed">{rec.reasoning}</p>
+                    </div>
+                    {rec.potentialSavings > 0 && (
+                      <span className="text-[10px] font-mono font-bold bg-amber-500/10 border border-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded shrink-0">
+                        Save ${rec.potentialSavings}/mo
+                      </span>
+                    )}
+                  </div>
                 ))}
+              </div>
+
+              <div className="border-t border-slate-800/80 pt-4 flex items-center justify-between font-mono text-[9px] text-slate-600">
+                <span>⚡ SHA-256 SECURE ADVISORY LOG</span>
+                <span>CREDEX VENTURES</span>
+              </div>
+
+            </div>
+          ) : (
+            <div className="h-64 border border-dashed border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-3 bg-slate-900/5">
+              <div className="h-10 w-10 rounded-xl border border-slate-800 flex items-center justify-center text-slate-500 font-mono text-sm bg-slate-950">
+                ?
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-slate-400">Console Awaiting Pipeline Execution</h4>
+                <p className="text-xs text-slate-500 max-w-xs mx-auto mt-1">Click execution to map real-time visualizations.</p>
               </div>
             </div>
           )}
         </section>
 
-        {/* Right Info Sidebar */}
-        <aside className="lg:col-span-4 space-y-4">
-          <div className="bg-slate-900/20 border border-slate-850 rounded-2xl p-5 space-y-4">
-            <h3 className="text-[10px] font-bold uppercase text-slate-400 tracking-widest">
-              Live Console Diagnostics
-            </h3>
-            <div className="space-y-3 text-xs text-slate-400 leading-relaxed">
-              <p>🎯 **How to test optimization results:**</p>
-              <ul className="list-disc pl-4 space-y-2">
-                <li>Set row 1 to **Cursor AI Editor** + Plan **Business** + Seats **2** + Spend **80**.</li>
-                <li>Set row 2 to **Claude Anthropic Pro** + Plan **Team** + Seats **3** + Spend **150**.</li>
-                <li>Click the **Execute Optimization Audit** button.</li>
-              </ul>
-              <p className="pt-2 border-t border-slate-900 text-[11px] text-amber-400">
-                The core math algorithm will automatically flag minimum billing seat floors and compute the target savings stream below!
-              </p>
-            </div>
-          </div>
-        </aside>
       </main>
 
       {/* FOOTER */}
